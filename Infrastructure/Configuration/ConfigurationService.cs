@@ -1,0 +1,53 @@
+﻿using Data;
+using Data.Abstraction;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Service;
+using Service.Abstract;
+using Service.Handlers;
+using Service.Implementation;
+using Service.Queries;
+using Service.Responses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Configuration
+{
+    public static class ConfigurationService
+    {
+        //public static void RegisterContextDb(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationDbContext"),
+        //        options => options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+        //}
+        public static void RegisterContextDb(this IServiceCollection service, IConfiguration configuration)
+        {
+            service.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DBInit"));
+            });
+        }
+        public static void RegisterDI(this  IServiceCollection service)
+        {
+            // AddScoped: mỗi khi request tới thì khởi tạo
+            service.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            service.AddScoped<IDapperHelper, DapperHelper>();
+            service.AddScoped<IBrandService, BrandService>();
+            service.AddScoped<IMachineService, MachineService>(); // Replace MachineService with the actual implementation class
+        }
+        public static void RegisMediatR(this IServiceCollection service)
+        {
+            service.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOQueryHandler).Assembly));
+            service.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOQuery).Assembly));
+            service.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOResponse).Assembly));
+          //  service.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(DeleteMachineByIdCommandHandler).Assembly));
+
+        }
+    }
+    
+}
