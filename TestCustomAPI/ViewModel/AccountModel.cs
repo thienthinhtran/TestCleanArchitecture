@@ -22,6 +22,7 @@ namespace TestCustomAPI.ViewModel
             RuleFor(m => m.Password)
                 .NotEmpty()
                 .MaximumLength(200);
+            // test add account
         }
     }
 }
