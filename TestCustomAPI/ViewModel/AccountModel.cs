@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
 
 namespace TestCustomAPI.ViewModel
 {
@@ -8,5 +9,19 @@ namespace TestCustomAPI.ViewModel
         public string Username {  get; set; }
         [Required]
         public string Password { get; set; }
+    }
+    public class LoginValidator : AbstractValidator<AccountModel>
+    {
+        public LoginValidator() 
+        {
+            RuleFor(m => m.Username)
+                .NotEmpty()
+                .MaximumLength(200)
+                .MinimumLength(3)
+                .WithMessage("Username length must between 5 to 200 !!! ");
+            RuleFor(m => m.Password)
+                .NotEmpty()
+                .MaximumLength(200);
+        }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using Data;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Abstract;
 using System.Threading.Tasks;
 
 namespace TestCustomAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BrandController : ControllerBase

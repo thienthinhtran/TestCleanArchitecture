@@ -1,10 +1,13 @@
 
+using FluentValidation.AspNetCore;
 using Infrastructure.Configuration;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Service.Handlers;
 using Service.Queries;
 using Service.Responses;
+using TestCustomAPI.ViewModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,13 @@ builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMac
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOQuery).Assembly));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOResponse).Assembly));
 
+// Regis Token
+builder.Services.RegisTokenBearer(builder.Configuration);
+
+//Fluent Validator
+builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AccountModel>());
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,6 +48,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

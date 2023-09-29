@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{759D7E4F-84D2-4390-9926-3ECBAD71C890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{9FF2C849-A55C-46DB-9906-DF5A32028A43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{9FF2C849-A55C-46DB-9906-DF5A32028A43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{8C4AB43A-1604-44D4-A4E7-25CE4405C24B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{8C4AB43A-1604-44D4-A4E7-25CE4405C24B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceAuthentication", "ServiceAuthentication\ServiceAuthentication.csproj", "{C54C98EE-0933-4844-9104-A5412FD0A405}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{8C4AB43A-1604-44D4-A4E7-25CE4405C24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C4AB43A-1604-44D4-A4E7-25CE4405C24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C4AB43A-1604-44D4-A4E7-25CE4405C24B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C54C98EE-0933-4844-9104-A5412FD0A405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C54C98EE-0933-4844-9104-A5412FD0A405}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C54C98EE-0933-4844-9104-A5412FD0A405}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C54C98EE-0933-4844-9104-A5412FD0A405}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,6 +24,6 @@ namespace Data.Abstraction
        // void Insert(IEnumerable<T> entities);
         void Update(T entity);
         Task CommitAsync();
-
+        Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression);
     }
 }

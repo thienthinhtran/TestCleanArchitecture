@@ -30,7 +30,7 @@ namespace Data
         public DbSet<SaleMachine> SaleMachine { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<User> User { get; set; }
-
+        public DbSet<UserToken> UserToken {  get; set; }
         #endregion
 
     }

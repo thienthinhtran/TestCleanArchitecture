@@ -79,9 +79,9 @@ namespace Data
         {
             await _applicationDbContext.SaveChangesAsync();
         }
-        /*public async Task Commit()
+        public async Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression)
         {
-           await _applicationDbContext.SaveChanges();
-        }*/
+            return await _applicationDbContext.Set<T>().FirstOrDefaultAsync();
+        }
     }
 }

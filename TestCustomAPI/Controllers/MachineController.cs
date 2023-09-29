@@ -6,9 +6,11 @@ using Service.Queries;
 using Service.Common;
 using Service.Responses;
 using static Service.Responses.InsertMachineDTOResponse;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TestCustomAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/machines")]
     public class MachineController : ControllerBase
