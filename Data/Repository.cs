@@ -81,7 +81,7 @@ namespace Data
         }
         public async Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression)
         {
-            return await _applicationDbContext.Set<T>().FirstOrDefaultAsync();
+            return await _applicationDbContext.Set<T>().FirstOrDefaultAsync(expression);
         }
     }
 }
