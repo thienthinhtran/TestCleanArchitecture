@@ -21,7 +21,8 @@ namespace TestCustomAPI.ViewModel
                 .WithMessage("Username length must between 5 to 200 !!! ");
             RuleFor(m => m.Password)
                 .NotEmpty()
-                .MaximumLength(200);
+                .MaximumLength(200)
+                .WithMessage("Maximum password length is 200 !!! ");
             // test add account
         }
     }

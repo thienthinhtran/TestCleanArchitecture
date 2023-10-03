@@ -19,5 +19,6 @@ namespace Domain.Entities
         public string? DisplayName { get; set; }
         public DateTime? LastLoggedIn { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public string? Role {  get; set; }
     }
 }

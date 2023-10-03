@@ -1,9 +1,13 @@
-﻿using Domain.Entities;
+﻿using Dapper;
+using Data.Abstraction;
+using Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
+using Service.Common;
 using ServiceAuthentication;
+using System.Data;
 using TestCustomAPI.ViewModel;
 
 namespace TestCustomAPI.Controllers
@@ -15,12 +19,63 @@ namespace TestCustomAPI.Controllers
         private readonly ITokenHandler _tokenHandler;
         private readonly IUserService _userService;
         private readonly IUserTokenService _userTokenSerive;
+        private readonly IDapperHelper _dapperHelper;
 
-        public AuthenticationController(IUserService userService, ITokenHandler tokenHandler, IUserTokenService userTokenSerive)
+        public AuthenticationController(IUserService userService, ITokenHandler tokenHandler, IUserTokenService userTokenSerive, IDapperHelper dapperHelper)
         {
             _tokenHandler = tokenHandler;
             _userService = userService;
             _userTokenSerive = userTokenSerive;
+            _dapperHelper = dapperHelper;
+        }
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterAsync([FromBody] UserDTO registrationModel)
+        {
+            if (registrationModel == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Check if the username is already taken
+            var existingUser = await _userService.FindByUsername(registrationModel.UserName);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Username", "Username is already taken.");
+                return BadRequest(ModelState);
+            }
+
+            // Create a new user entity and set properties
+            var newUser = new User
+            {
+                UserName = registrationModel.UserName,
+                Password = registrationModel.Password,
+                Role = "User", // Set role to "User"
+               /* DisplayName = null, // Set DisplayName to null
+                LastLoggedIn = null, // Set LastLoggedIn to null
+                CreatedDate = null // Set CreatedDate to null*/
+            };
+
+            // Add the new user to the database using Dapper
+            try
+            {
+                // Create a DynamicParameters object and add parameters
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserName", newUser.UserName);
+                parameters.Add("@Password", newUser.Password);
+                parameters.Add("@Role", newUser.Role);
+
+                // Replace the following line with your Dapper-based code for inserting the user
+                await _dapperHelper.ExecuteNotReturnAsync("INSERT INTO [User] (UserName, Password, Role) VALUES (@UserName, @Password, @Role)", parameters);
+
+                return Ok("Registration successful");
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during user insertion
+                Console.WriteLine(ex);
+                return StatusCode(500, "Internal server error");
+            }
         }
         [HttpPost("login")]
         [AllowAnonymous]
@@ -36,6 +91,7 @@ namespace TestCustomAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
+            Console.WriteLine("ksjdfbgikoub");
 
             var user = await _userService.CheckLogin(accountModel.Username, accountModel.Password);
             if (user == null)

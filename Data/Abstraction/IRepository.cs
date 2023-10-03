@@ -21,6 +21,7 @@ namespace Data.Abstraction
         */
         Task<T> GetById(object Id);
         Task InsertAsync(IEnumerable<T> entity);
+        Task Insert(T entity);
        // void Insert(IEnumerable<T> entities);
         void Update(T entity);
         Task CommitAsync();

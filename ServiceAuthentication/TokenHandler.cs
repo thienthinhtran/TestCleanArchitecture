@@ -24,7 +24,7 @@ namespace ServiceAuthentication
             _configuration = configuration;
             _userService = userService;
         }
-         public async Task<(string, DateTime)> CreateAccessToken(User user)
+        public async Task<(string, DateTime)> CreateAccessToken(User user)
         {
             DateTime? expiresAt = DateTime.Now.AddMinutes(15);
             var claims = new Claim[]
@@ -39,10 +39,14 @@ namespace ServiceAuthentication
                 new Claim(JwtRegisteredClaimNames.Aud, "Thinh Web API Test", ClaimValueTypes.String, _configuration["TokenBear:Issuer"]),
                 // Thời gian hết hạn
                 new Claim(JwtRegisteredClaimNames.Exp, DateTime.Now.AddMinutes(15).ToString("yyyy/MM/dd hh:mm:ss"), ClaimValueTypes.String, _configuration["TokenBear:Issuer"]),
-                new Claim(ClaimTypes.Name, user.DisplayName, ClaimValueTypes.String, _configuration["TokenBear:Issuer"]),
-                new Claim("Username", user.UserName, ClaimValueTypes.String, "")
-
+                //new Claim(ClaimTypes.Name, user.DisplayName, ClaimValueTypes.String, _configuration["TokenBear:Issuer"])
             };
+
+            if (!string.IsNullOrEmpty(user.UserName))
+            {
+                claims = claims.Concat(new Claim[] { new Claim("Username", user.UserName, ClaimValueTypes.String, "") }).ToArray();
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenBear:SignatureKey"]));
             var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

@@ -57,9 +57,9 @@ namespace Data
 
 
 
-        public async Task Insert(IEnumerable<T> entities)
+        public async Task Insert(T entity)
         {
-            await _applicationDbContext.Set<T>().AddRangeAsync(entities);
+            await _applicationDbContext.AddAsync(entity);
             await CommitAsync();
 
         }
