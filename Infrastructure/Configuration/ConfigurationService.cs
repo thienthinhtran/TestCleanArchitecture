@@ -19,16 +19,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.OpenApi.Models;
 
 namespace Infrastructure.Configuration
 {
     public static class ConfigurationService
     {
-        //public static void RegisterContextDb(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationDbContext"),
-        //        options => options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
-        //}
         public static void RegisterContextDb(this IServiceCollection service, IConfiguration configuration)
         {
             service.AddDbContext<ApplicationDbContext>(options =>
@@ -48,6 +45,7 @@ namespace Infrastructure.Configuration
             service.AddScoped<ITokenHandler, ServiceAuthentication.TokenHandler>();
             service.AddScoped<IUserTokenService, UserTokenService>();
         }
+
         public static void RegisMediatR(this IServiceCollection service)
         {
             service.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOQueryHandler).Assembly));
@@ -97,6 +95,32 @@ namespace Infrastructure.Configuration
                         return Task.CompletedTask;
                     }
                 };
+            });
+        }
+        public static void RegisSwaggerGen(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Test Authorization Header (\"bearer {token}\")",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
+        }
+
+
+        public static void RegisRole(this IServiceCollection service)
+        {
+            service.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                    policy.RequireRole("Admin"));
+                options.AddPolicy("UserOnly", policy =>
+                    policy.RequireRole("User"));
             });
         }
     }

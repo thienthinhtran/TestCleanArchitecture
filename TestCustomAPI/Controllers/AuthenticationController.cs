@@ -50,10 +50,7 @@ namespace TestCustomAPI.Controllers
             {
                 UserName = registrationModel.UserName,
                 Password = registrationModel.Password,
-                Role = "User", // Set role to "User"
-               /* DisplayName = null, // Set DisplayName to null
-                LastLoggedIn = null, // Set LastLoggedIn to null
-                CreatedDate = null // Set CreatedDate to null*/
+                Role = "User"
             };
 
             // Add the new user to the database using Dapper
@@ -81,17 +78,10 @@ namespace TestCustomAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LoginAsync([FromBody] AccountModel accountModel)
         {
-            /*var validations = await validator.ValidateAsync(accountModel);
-
-            if (!validations.IsValid)
-            {
-                return BadRequest(validations.Errors);
-            }*/
             if(accountModel == null)
             {
                 return BadRequest(ModelState);
             }
-            Console.WriteLine("ksjdfbgikoub");
 
             var user = await _userService.CheckLogin(accountModel.Username, accountModel.Password);
             if (user == null)
@@ -130,6 +120,5 @@ namespace TestCustomAPI.Controllers
             }
             
         }
-
     }
 }

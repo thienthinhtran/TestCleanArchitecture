@@ -45,6 +45,9 @@ namespace ServiceAuthentication
             if (!string.IsNullOrEmpty(user.UserName))
             {
                 claims = claims.Concat(new Claim[] { new Claim("Username", user.UserName, ClaimValueTypes.String, "") }).ToArray();
+                //new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, _configuration["TokenBear:Issuer"])
+                claims = claims.Concat(new Claim[] { new Claim(ClaimTypes.Role, user.Role, ClaimValueTypes.String, _configuration["TokenBear:Issuer"]) }).ToArray();
+
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenBear:SignatureKey"]));

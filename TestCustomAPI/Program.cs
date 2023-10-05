@@ -4,9 +4,12 @@ using Infrastructure.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Service.Handlers;
 using Service.Queries;
 using Service.Responses;
+using Swashbuckle.AspNetCore.Filters;
 using TestCustomAPI.ViewModel;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +39,12 @@ builder.Services.RegisTokenBearer(builder.Configuration);
 //Fluent Validator
 builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AccountModel>());
 
+// Gen Authorization Swagger Icon
+builder.Services.RegisSwaggerGen();
+
+
+// Add Authorization Role
+builder.Services.RegisRole();
 
 var app = builder.Build();
 
