@@ -17,9 +17,9 @@ namespace Service
         {
             _userTokenRepository = userTokenRepository;
         }
-        public async Task SaveToken(IEnumerable<UserToken> userToken)
+        public async Task SaveToken(UserToken userToken)
         {
-            await _userTokenRepository.InsertAsync(userToken);
+            await _userTokenRepository.Insert(userToken);
             await _userTokenRepository.CommitAsync();
         }
     }

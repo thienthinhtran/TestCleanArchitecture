@@ -1,124 +1,88 @@
-﻿using Dapper;
-using Data.Abstraction;
-using Domain.Entities;
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Service;
+using System;
+using System.Threading.Tasks;
+using MediatR;
+using Service.Command;
 using Service.Common;
-using ServiceAuthentication;
-using System.Data;
-using TestCustomAPI.ViewModel;
+using Service.Responses;
 
-namespace TestCustomAPI.Controllers
+namespace YourApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/authentication")]
     public class AuthenticationController : ControllerBase
     {
-        private readonly ITokenHandler _tokenHandler;
-        private readonly IUserService _userService;
-        private readonly IUserTokenService _userTokenSerive;
-        private readonly IDapperHelper _dapperHelper;
+        private readonly IMediator _mediator;
 
-        public AuthenticationController(IUserService userService, ITokenHandler tokenHandler, IUserTokenService userTokenSerive, IDapperHelper dapperHelper)
+        public AuthenticationController(IMediator mediator)
         {
-            _tokenHandler = tokenHandler;
-            _userService = userService;
-            _userTokenSerive = userTokenSerive;
-            _dapperHelper = dapperHelper;
+            _mediator = mediator;
         }
+
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserDTO registrationModel)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterDTO registrationModel)
         {
             if (registrationModel == null)
             {
                 return BadRequest(ModelState);
             }
 
-            // Check if the username is already taken
-            var existingUser = await _userService.FindByUsername(registrationModel.UserName);
-            if (existingUser != null)
-            {
-                ModelState.AddModelError("Username", "Username is already taken.");
-                return BadRequest(ModelState);
-            }
-
-            // Create a new user entity and set properties
-            var newUser = new User
-            {
-                UserName = registrationModel.UserName,
-                Password = registrationModel.Password,
-                Role = "User"
-            };
-
-            // Add the new user to the database using Dapper
             try
             {
-                // Create a DynamicParameters object and add parameters
-                var parameters = new DynamicParameters();
-                parameters.Add("@UserName", newUser.UserName);
-                parameters.Add("@Password", newUser.Password);
-                parameters.Add("@Role", newUser.Role);
+                var command = new RegisterUserCommand
+                {
+                    UserName = registrationModel.UserName,
+                    Password = registrationModel.Password,
+                    Role = "User"
+                };
 
-                // Replace the following line with your Dapper-based code for inserting the user
-                await _dapperHelper.ExecuteNotReturnAsync("INSERT INTO [User] (UserName, Password, Role) VALUES (@UserName, @Password, @Role)", parameters);
+                var result = await _mediator.Send(command);
 
-                return Ok("Registration successful");
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that occur during user insertion
+                // Handle any exceptions that occur during user registration
                 Console.WriteLine(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> LoginAsync([FromBody] AccountModel accountModel)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginDTO loginModel)
         {
-            if(accountModel == null)
+            if (loginModel == null)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _userService.CheckLogin(accountModel.Username, accountModel.Password);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            (string accessToken, DateTime expiredAccess)  = await _tokenHandler.CreateAccessToken(user);
-            (string refreshToken, DateTime expiredRefresh)  = await _tokenHandler.CreateRefreshToken(user);
             try
             {
-                await _userTokenSerive.SaveToken(new List<UserToken>
+                var command = new LoginUserCommand
                 {
-                    new UserToken
-                    {
-                        AccessToken = accessToken,
-                        RefreshToken = refreshToken,
-                        ExpiredDateAccessToken = expiredAccess,
-                        ExpiredDateRefreshToken = expiredRefresh,
-                        UserId = user.Id
-                    }
-                });
+                    UserName = loginModel.UserName,
+                    Password = loginModel.Password
+                };
 
-                return Ok(new JwtModel
+                var result = await _mediator.Send(command);
+
+                if (result != null)
                 {
-                    AccessToken = accessToken,
-                    RefreshToken = refreshToken,
-                    FullName = user.DisplayName,
-                    UserName = user.UserName
-                });
+                   return Ok(result);
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that occur during token save
+                // Handle any exceptions that occur during login
+                Console.WriteLine(ex);
                 return StatusCode(500, "Internal server error");
             }
-            
         }
     }
 }

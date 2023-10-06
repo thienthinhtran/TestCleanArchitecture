@@ -4,6 +4,6 @@ namespace Service
 {
     public interface IUserTokenService
     {
-        Task SaveToken(IEnumerable<UserToken> userToken);
+        Task SaveToken(UserToken userToken);
     }
 }

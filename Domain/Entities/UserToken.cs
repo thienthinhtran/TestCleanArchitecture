@@ -12,8 +12,8 @@ namespace Domain.Entities
         public int UserId {  get; set; }
         public string AccessToken { get; set; }
         public DateTime ExpiredDateAccessToken { get; set; }
-        public string? RefreshToken { get; set; }
-        public DateTime? ExpiredDateRefreshToken { get; set; }
+        //public string? RefreshToken { get; set; }
+        //public DateTime? ExpiredDateRefreshToken { get; set; }
         public DateTime? CreadtedDate { get; set; }
     }
 }
