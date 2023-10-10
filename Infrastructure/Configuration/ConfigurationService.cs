@@ -14,13 +14,12 @@ using Service.Implementation;
 using Service.Queries;
 using Service.Responses;
 using ServiceAuthentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
+using Service.Behaviors;
+using Service.Validators;
+using Service.Command;
 
 namespace Infrastructure.Configuration
 {
@@ -44,6 +43,7 @@ namespace Infrastructure.Configuration
             service.AddScoped<IUserService,  UserService>();
             service.AddScoped<ITokenHandler, ServiceAuthentication.TokenHandler>();
             service.AddScoped<IUserTokenService, UserTokenService>();
+           // service.AddScoped<IPipelineBehavior<RegisterUserCommand, ErrorOr<AuthenticationDTOResponse>>, ValidationPipeline>();
         }
 
         public static void RegisMediatR(this IServiceCollection service)
@@ -111,17 +111,22 @@ namespace Infrastructure.Configuration
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             });
         }
-
-
         public static void RegisRole(this IServiceCollection service)
         {
             service.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminOnly", policy =>
                     policy.RequireRole("Admin"));
+
                 options.AddPolicy("UserOnly", policy =>
                     policy.RequireRole("User"));
             });
+        }
+        public static void RegisterFluentValidation(this IServiceCollection service)
+        {
+            service.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
+            // service.AddTransient<IValidator<CreateProductDetailCommand>, AddProductDetailCommandValidator>();        }
+            service.AddTransient<IValidator<LoginUserCommand>, LoginValidator>();
         }
     }
     

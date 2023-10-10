@@ -6,6 +6,8 @@ using MediatR;
 using Service.Command;
 using Service.Common;
 using Service.Responses;
+using Service.Validators;
+using FluentValidation;
 
 namespace YourApp.Controllers
 {
@@ -53,35 +55,37 @@ namespace YourApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LoginAsync([FromBody] LoginDTO loginModel)
         {
+            
             if (loginModel == null)
             {
-                return BadRequest(ModelState);
+                //return BadRequest(ModelState);
+                return BadRequest("Please fill in the space");
             }
 
-            try
+            var command = new LoginUserCommand
             {
-                var command = new LoginUserCommand
+                UserName = loginModel.UserName,
+                Password = loginModel.Password
+            };
+            LoginValidator validation = new();
+            var check = await validation.ValidateAsync(command);
+            if(!check.IsValid)
+            {
+                foreach (var failure in check.Errors)
                 {
-                    UserName = loginModel.UserName,
-                    Password = loginModel.Password
-                };
-
-                var result = await _mediator.Send(command);
-
-                if (result != null)
-                {
-                   return Ok(result);
-                }
-                else
-                {
-                    return Unauthorized();
+                    return BadRequest(failure.ErrorMessage);
                 }
             }
-            catch (Exception ex)
+
+            var result = await _mediator.Send(command);
+
+            if (result != null)
             {
-                // Handle any exceptions that occur during login
-                Console.WriteLine(ex);
-                return StatusCode(500, "Internal server error");
+                return Ok(result);
+            }
+            else
+            {
+                return Unauthorized();
             }
         }
     }

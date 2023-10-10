@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Service.Command;
 using Service.Handlers;
 using Service.Queries;
 using Service.Responses;
@@ -39,7 +40,7 @@ builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMac
 builder.Services.RegisTokenBearer(builder.Configuration);
 
 //Fluent Validator
-builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AccountModel>());
+//builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginUserCommand>());
 
 // Gen Authorization Swagger Icon
 builder.Services.RegisSwaggerGen();
@@ -47,6 +48,9 @@ builder.Services.RegisSwaggerGen();
 
 // Add Authorization Role
 builder.Services.RegisRole();
+
+
+builder.Services.RegisterFluentValidation();
 
 var app = builder.Build();
 
