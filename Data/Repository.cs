@@ -13,7 +13,7 @@ namespace Data
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private ApplicationDbContext _applicationDbContext;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         public Repository(ApplicationDbContext applicationDbContext)
         {

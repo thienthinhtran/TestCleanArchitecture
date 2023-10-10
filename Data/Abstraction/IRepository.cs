@@ -11,18 +11,11 @@ namespace Data.Abstraction
 {
     public interface IRepository<T> where T : class
     {
-        //void DeleteAsync(T entity);
-       // void DeleteAsync(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> GetAllAsync();
-        /*        Task<IEnumerable<T>> GetAllAsync();
-*/
         IEnumerable<T> GetByCondition(Expression<Func<T, bool>> expression);
-        /*        Task<int> SaveChangesAsync();
-        */
         Task<T> GetById(object Id);
         Task InsertAsync(IEnumerable<T> entity);
         Task Insert(T entity);
-       // void Insert(IEnumerable<T> entities);
         void Update(T entity);
         Task CommitAsync();
         Task<T> GetSingleByConditionAsync(Expression<Func<T, bool>> expression);

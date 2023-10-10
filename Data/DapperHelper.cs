@@ -16,31 +16,29 @@ namespace Data
     public class DapperHelper : IDapperHelper
     {
         private readonly string _configuration;
-        private readonly IDbConnection _dbConnection;
 
         public DapperHelper(IConfiguration configuration)
         {
             _configuration = configuration.GetConnectionString("DbInit");
-            _dbConnection = new SqlConnection(_configuration);
         }
-        public async Task ExecuteNotReturnAsync(string query, DynamicParameters parameters = null)
+        public async Task ExecuteNotReturnAsync(string query, DynamicParameters? parameters = null, IDbTransaction? dbTransaction = null)
         {
             // mở kết nối DB
-            using (var dbConnection = new SqlConnection(_configuration))
+            using var dbConnection = new SqlConnection(_configuration);
+            await dbConnection.OpenAsync();
+            using var transaction = dbConnection.BeginTransaction();
+            try
             {
-                await dbConnection.ExecuteAsync(query, parameters, commandType: CommandType.Text);
+                var result = await dbConnection.ExecuteAsync(query, parameters);
+                await transaction.CommitAsync();
             }
-        }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+            }
 
-       /* public async Task<T> ExecuteScalarAsync<T>(string query, DynamicParameters parameters = null)
-        {
-            using (var dbConnection = new SqlConnection(_configuration))
-            {
-                await dbConnection.OpenAsync();
-                return await dbConnection.ExecuteScalarAsync<T>(query, parameters);
-            }
-        }*/
-        public async Task<T> ExecuteScalarAsync<T>(string query, DynamicParameters parameters = null)
+        }
+        public async Task<T> ExecuteScalarAsync<T>(string query, DynamicParameters? parameters = null)
         {
             using (var dbConnection = new SqlConnection(_configuration))
             {
@@ -49,7 +47,7 @@ namespace Data
             }
         }
         // For get by Id.
-        public async Task<T> ExecuteSqlReturnSingle<T>(string query, DynamicParameters parameters = null)
+        public async Task<T> ExecuteSqlReturnSingle<T>(string query, DynamicParameters? parameters = null)
         {
             using (var dbConnection = new SqlConnection(_configuration))
             {
@@ -58,7 +56,7 @@ namespace Data
             }
         }
 
-        public async Task<IEnumerable<T>> ExecuteSqlReturnList<T>(string query, DynamicParameters parameters = null)
+        public async Task<IEnumerable<T>> ExecuteSqlReturnList<T>(string query, DynamicParameters? parameters = null)
         {
             using (var dbConnection = new SqlConnection(_configuration))
             {
@@ -66,7 +64,7 @@ namespace Data
             }
         }
 
-        public async Task<IEnumerable<T>> ExecuteStoreProcedureReturnList<T>(string query, DynamicParameters parameters = null)
+        public async Task<IEnumerable<T>> ExecuteStoreProcedureReturnList<T>(string query, DynamicParameters? parameters = null)
         {
             using (var dbConnection = new SqlConnection(_configuration))
             {

@@ -13,7 +13,7 @@ using Service.Exceptions;
 namespace Service.Behaviors
 {
     
-    public class ValidationPipeline<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+    public class ValidationPipeline<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
         private readonly IEnumerable<IValidator<IRequest?>> _validators;
 

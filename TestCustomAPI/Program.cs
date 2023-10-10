@@ -33,14 +33,9 @@ builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(Program).
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOQueryHandler).Assembly));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOQuery).Assembly));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(GetAllMachineDTOResponse).Assembly));
-//builder.Services.AddMediatR(typeof(LoginUserCommandHandler));
-
 
 // Regis Token
 builder.Services.RegisTokenBearer(builder.Configuration);
-
-//Fluent Validator
-//builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginUserCommand>());
 
 // Gen Authorization Swagger Icon
 builder.Services.RegisSwaggerGen();

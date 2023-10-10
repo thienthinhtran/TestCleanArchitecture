@@ -44,13 +44,8 @@ namespace TestCustomAPI.Controllers
                 return BadRequest(); // Return a 400 Bad Request response if the request body is empty or invalid.
             }
 
-             _brandService.InsertAsync(brand);
+             await _brandService.InsertAsync(brand);
             return Ok(brand);
-
-            // The following line is not needed as it's already handled in the Insert method of BrandService.
-            // await _brandService.SaveChangesAsync(); // Save changes to the database
-
-           // return CreatedAtAction(nameof(GetById), new { id = createdBrand.Id }, createdBrand);
         }
     }
 }
